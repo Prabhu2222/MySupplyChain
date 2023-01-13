@@ -3,14 +3,9 @@ package com.example.mysupplychain;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -22,7 +17,7 @@ public class SupplyChainMain extends Application {
     Pane root;
    static  Pane bodyPane=new Pane();
     ProductDetails productDetails=new ProductDetails();
-    Button globalLogOut=new Button("LogOut");
+    Button globalLogOutButton;
     TextField searchTextField;
     Label customerInfoLabel=new Label();
     Pane createContent(){
@@ -31,11 +26,11 @@ public class SupplyChainMain extends Application {
 
 
         bodyPane.setPrefWidth(width);
-        bodyPane.setPrefHeight(height+headerBar);
+        bodyPane.setPrefHeight(height);
         bodyPane.setTranslateY(headerBar);
         bodyPane.getChildren().addAll(logInPage());
         bodyPane.setStyle("-fx-background-color:yellow");
-        root.getChildren().addAll(headerBarTop(),footerBar(),bodyPane);
+        root.getChildren().addAll(headerBarTop(),signUpFooterBar(),bodyPane);
 
 
         return root;
@@ -59,6 +54,7 @@ public class SupplyChainMain extends Application {
        GridPane pane=new GridPane();
        searchTextField=new TextField();
         searchTextField.setEditable(false);
+        globalLogOutButton =new Button("LogOut");
         Button searchButton=new Button("Search");
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -74,16 +70,17 @@ public class SupplyChainMain extends Application {
 
         pane.add(searchTextField,0,0);
         pane.add(searchButton,1,0);
-        pane.add(globalLogOut,2,0);
+        pane.add(globalLogOutButton,2,0);
         pane.add(customerInfoLabel,3,0);
 
 
-       globalLogOut.setDisable(true);
-       globalLogOut.setOnAction(new EventHandler<ActionEvent>() {
+       globalLogOutButton.setDisable(true);
+       globalLogOutButton.setOnAction(new EventHandler<ActionEvent>() {
            @Override
            public void handle(ActionEvent actionEvent) {
-               globalLogOut.setDisable(true);
-               bodyPane.setPrefHeight(headerBar+height);
+               globalLogOutButton.setDisable(true);
+//               bodyPane.setPrefHeight(headerBar+height);
+               root.getChildren().add(signUpFooterBar());
                customerInfoLabel.setText("Welcome User");
                bodyPane.getChildren().clear();
                bodyPane.getChildren().add(logInPage());
@@ -125,8 +122,9 @@ public class SupplyChainMain extends Application {
                     return;
                 }
                 else if(LogIn.customerLogin(email,password)){
-                    globalLogOut.setDisable(false);
-                    bodyPane.setPrefHeight(height);
+                    globalLogOutButton.setDisable(false);
+//                    bodyPane.setPrefHeight(height);
+                    root.getChildren().add(footerBar());
                     String name=emailTextField.getText();
                     name=name.substring(0,name.indexOf('@'));
                     customerInfoLabel.setText("Welcome : "+name);
@@ -188,6 +186,101 @@ public class SupplyChainMain extends Application {
         pane.setAlignment(Pos.CENTER);
 
 
+        return pane;
+    }
+    GridPane signUpFooterBar(){
+       GridPane pane=new GridPane();
+       Label signUpLabel=new Label("Not a Member ? Sign up");
+       Button signUpButton=new Button("Sign Up");
+       signUpButton.setTranslateX(36);
+       signUpButton.setOnAction(new EventHandler<ActionEvent>() {
+           @Override
+           public void handle(ActionEvent actionEvent) {
+               bodyPane.getChildren().clear();
+               bodyPane.getChildren().add(signUpPane());
+               bodyPane.setPrefHeight(height+headerBar);
+           }
+       });
+
+       pane.add(signUpLabel,0,0);
+       pane.add(signUpButton,0,1);
+       pane.setPrefWidth(width);
+       pane.setPrefHeight(headerBar);
+       pane.setTranslateY(headerBar+height);
+       pane.setVgap(5);
+       pane.setStyle("-fx-background-color:grey");
+//       pane.setGridLinesVisible(true);
+       pane.setAlignment(Pos.CENTER);
+
+       return pane;
+    }
+    public  Pane signUpPane(){
+        GridPane pane=new GridPane();
+
+        Label firstnameLabel=new Label("First Name : ");
+        TextField firstNameTextField=new TextField();
+        firstNameTextField.setPromptText("first name");
+        firstNameTextField.setTooltip(new Tooltip("* Mandatory Field"));
+
+        Label lastnameLabel=new Label("Last Name : ");
+        TextField lastNameTextField=new TextField();
+        lastNameTextField.setPromptText("last name");
+
+        Label addressLabel=new Label("Address : ");
+        TextField addressTextField=new TextField();
+        addressTextField.setPromptText("Communication address");
+
+
+        Label mobileNumberLabel=new Label("Mobile Number : ");
+        TextField mobileNumberTextField=new TextField();
+        mobileNumberTextField.setPromptText("10 digit mobile number");
+        mobileNumberTextField.setTooltip(new Tooltip("* Mandatory Field"));
+
+        Label emailLabel=new Label("Email : ");
+        TextField emailTextField=new TextField();
+        emailTextField.setPromptText("xyz@gmail.com");
+        emailTextField.setTooltip(new Tooltip("* Mandatory Field"));
+
+        Label passwordLabel=new Label("Password : ");
+        PasswordField passwordField=new PasswordField();
+        passwordField.setTooltip(new Tooltip("* Mandatory Field"));
+
+        Button registerButton=new Button("Register");
+        Button backButton=new Button("Back");
+        backButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.setPrefHeight(height);
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(logInPage());
+
+            }
+        });
+
+
+        pane.add(firstnameLabel,0,0);
+        pane.add(firstNameTextField,1,0);
+        pane.add(lastnameLabel,0,1);
+        pane.add(lastNameTextField,1,1);
+        pane.add(addressLabel,0,2);
+        pane.add(addressTextField,1,2);
+        pane.add(mobileNumberLabel,0,3);
+        pane.add(mobileNumberTextField,1,3);
+        pane.add(emailLabel,0,4);
+        pane.add(emailTextField,1,4);
+        pane.add(passwordLabel,0,5);
+        pane.add(passwordField,1,5);
+        pane.add(registerButton,1,6);
+        pane.add(backButton,1,7);
+
+
+
+        pane.setHgap(5);
+        pane.setVgap(5);
+        pane.setAlignment(Pos.CENTER);
+        pane.setPrefWidth(SupplyChainMain.width);
+        pane.setPrefHeight(SupplyChainMain.height);
+        pane.setTranslateY(SupplyChainMain.headerBar);
         return pane;
     }
 
